@@ -25,6 +25,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class Base {
@@ -77,6 +79,21 @@ public class Base {
             //Kubenetes config
             driver=new RemoteWebDriver(new URL("http://localhost:53946/wd/hub"),desiredCapabilities);
         }
+      else if(prop.getProperty("execution_env").equalsIgnoreCase("SauceLabs")){
+          ChromeOptions options = new ChromeOptions();
+          options.setPlatformName("Windows 10");
+          options.setBrowserVersion("latest");
+
+          Map<String, Object> sauceOptions = new HashMap<>();
+          sauceOptions.put("username", System.getenv("SAUCE_USERNAME"));
+          sauceOptions.put("accessKey", System.getenv("SAUCE_ACCESS_KEY"));
+          //sauceOptions.put("name", testInfo.getDisplayName());
+
+          options.setCapability("sauce:options", sauceOptions);
+          URL url = new URL("https://ondemand.us-west-1.saucelabs.com/wd/hub");
+
+          driver = new RemoteWebDriver(url, options);
+      }
 
 
         else if(prop.getProperty("execution_env").equalsIgnoreCase("local"))
